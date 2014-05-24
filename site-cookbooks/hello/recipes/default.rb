@@ -7,3 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 log "Hello"
+
+package "zsh" do
+    action :install
+end
