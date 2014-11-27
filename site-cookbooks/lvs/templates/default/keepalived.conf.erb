@@ -1,0 +1,60 @@
+global_defs {
+}                                   
+                                    
+vrrp_instance VI_1 {
+    state BACKUP                    
+    interface eth1
+    garp_master_delay 10            
+    smtp_alert
+    virtual_router_id 51            
+    priority 100
+    advert_int 1                    
+    authentication {
+        auth_type PASS
+        auth_pass 1111              
+    }
+    virtual_ipaddress {
+        192.168.0.2
+    }
+}
+
+virtual_server 192.168.0.2 80 {
+    delay_loop  1
+    lb_algo     wlc
+    lb_kind     NAT
+    protocol    TCP
+
+    real_server 192.168.0.3 80 {
+        weight  1
+        weight  1                               
+        inhibit_on_failure                      
+#       TCP_CHECK {                             
+#           connect_port 80                     
+#           connect_timeout 3                   
+#       }                                       
+        HTTP_GET {                              
+            url {                               
+                path /index                     
+                status_code 200                 
+            }                                   
+            connect_timeout 3                   
+            nb_get_retry 3                      
+            delay_before_retry 3                
+        }                                       
+    }                                           
+                                                
+    real_server 192.168.0.4 80 {                
+        weight  1                               
+        inhibit_on_failure                      
+        HTTP_GET {                              
+            url {                               
+                path /index                     
+                status_code 200                 
+            }                                   
+            connect_timeout 3                   
+            nb_get_retry 3                      
+            delay_before_retry 3
+        }
+    }
+    sorry_server 127.0.0.1 80
+}
