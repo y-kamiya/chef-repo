@@ -6,11 +6,17 @@
 #
 # All rights reserved - Do Not Redistribute
 #
-file "/etc/sysctl.conf" do
+template "/etc/sysctl.conf" do
     owner "root"
     group "root"
     mode "0644"
+    source "sysctl.conf.erb"
     action :create
+end
+
+service "sysctl" do
+    start_command "sysctl -p"
+    action :start
 end
 
 template "/tmp/iptables.rules" do
@@ -38,4 +44,9 @@ template "/etc/keepalived/keepalived.conf" do
     mode "0644"
     source "keepalived.conf.erb"
     action :create
+end
+
+service "keepalived" do
+    supports :status => true, :restart => true, :reload => true
+    action [ :enable, :start ]
 end
