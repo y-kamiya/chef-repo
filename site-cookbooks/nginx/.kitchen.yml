@@ -1,12 +1,20 @@
 ---
 driver:
-  name: vagrant
+  name: docker
+  socket: <%= ENV['DOCKER_HOST'] %>
+  #name: vagrant
 
 provisioner:
   name: chef_solo
 
 platforms:
-  - name: ubuntu-12.04
+  #- name: ubuntu-12.04
+  - name: trusty
+    driver_config:
+      image: ubuntu-chef
+      platform: ubuntu
+#     provision_command: 
+#       - apt-get install net-tools
 
 suites:
   - name: default
